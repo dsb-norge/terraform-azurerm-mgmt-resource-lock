@@ -8,36 +8,36 @@ Refer to [examples](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource
 
 
 <!-- BEGIN_TF_DOCS -->
+<!-- markdownlint-disable MD033 -->
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0, < 2.0.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.0.0, < 5.0.0 |
 
+## Resources
 
-```hcl
-locals {
-  default_lock_level = "CanNotDelete"
-  lock_levels = { for name, spec in var.protected_resources :
-    name => coalesce(spec.lock_level, local.default_lock_level)
-  }
-  descriptions = { for name, spec in var.protected_resources :
-    name => coalesce(spec.description, "${local.lock_levels[name]} lock for ${spec.name}")
-  }
-}
+| Name | Type |
+|------|------|
+| [azurerm_management_lock.protected_resource_lock](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) | resource |
 
-resource "azurerm_management_lock" "protected_resource_lock" {
-  for_each = var.protected_resources
+<!-- markdownlint-disable MD013 -->
+## Inputs
 
-  lock_level = coalesce(each.value.lock_level, "CanNotDelete")
-  name       = "lock-${each.value.name}"
-  scope      = each.value.id
-  notes      = <<-NOTES
-    ApplicationName: ${var.app_name}
-    CreatedBy: ${var.created_by}
-    Description: ${local.descriptions[each.key]}
-  NOTES
-}
-```
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Name of application/domain using resources | `string` | n/a | yes |
+| <a name="input_created_by"></a> [created\_by](#input\_created\_by) | The terraform project managing the lock(s) | `string` | n/a | yes |
+| <a name="input_protected_resources"></a> [protected\_resources](#input\_protected\_resources) | Map with configuration of what resources to lock and how. | <pre>map(object({<br/>    id : string,<br/>    name : string,<br/>    lock_level : optional(string),<br/>    description : optional(string),<br/>  }))</pre> | n/a | yes |
+
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_management_lock_ids"></a> [management\_lock\_ids](#output\_management\_lock\_ids) | ids of the the management locks created by this module |
+
+## Modules
+
+No modules.
 <!-- END_TF_DOCS -->
