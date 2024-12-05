@@ -8,7 +8,7 @@ terraform {
   required_providers {
     azapi = {
       source  = "Azure/azapi"
-      version = ">=1.12.0, <2"
+      version = "~> 2.x"
     }
   }
 }
@@ -68,8 +68,8 @@ output "map_of_locks" {
   DESC
   value = { for k, v in local.locks :
     k => merge(v, {
-      level = jsondecode(data.azapi_resource.this[k].output).properties.level
-      notes = jsondecode(data.azapi_resource.this[k].output).properties.notes
+      level = data.azapi_resource.this[k].output.properties.level
+      notes = data.azapi_resource.this[k].output.properties.notes
     })
   }
 }
