@@ -5,17 +5,18 @@ variable "app_name" {
 }
 
 variable "created_by" {
-  description = "the tf project managing the lock(s)"
+  description = "The terraform project managing the lock(s)"
   type        = string
   nullable    = false
 }
 
 variable "protected_resources" {
-  description = "map of scope (URN/ID) and name for resources that should have a CanNotDelete lock"
+  description = "Map with configuration of what resources to lock and how."
   type = map(object({
     id : string,
     name : string,
     lock_level : optional(string),
+    description : optional(string),
   }))
   validation {
     condition = alltrue([
