@@ -9,8 +9,8 @@ resource "azurerm_resource_group" "this" {
   name     = var.resource_group_name
 }
 
-resource "azurerm_dns_zone" "this" {
-  name                = "mydomain.com"
+resource "azurerm_private_dns_zone" "this" {
+  name                = "locktest.com"
   resource_group_name = azurerm_resource_group.this.name
 }
 
@@ -18,7 +18,7 @@ resource "azurerm_dns_a_record" "this" {
   name                = "test"
   resource_group_name = azurerm_resource_group.this.name
   ttl                 = 300
-  zone_name           = azurerm_dns_zone.this.name
+  zone_name           = azurerm_private_dns_zone.this.name
   records             = ["10.0.180.17"]
 }
 
