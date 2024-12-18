@@ -6,7 +6,6 @@ Terraform module for adding [management locks](https://registry.terraform.io/pro
 
 Refer to [examples](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource-lock/tree/main/examples) for usage of module.
 
-
 <!-- BEGIN_TF_DOCS -->
 <!-- markdownlint-disable MD033 -->
 ## Requirements
