@@ -1,7 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
 
-
-
 ```hcl
 # tflint-ignore-file: azurerm_resource_tag
 
@@ -28,6 +26,7 @@ module "prevent_resource_group_from_deletion" {
   created_by = "https://github.com/my-org/my-tf-project"
 }
 ```
+
 ## Outputs
 
 | Name | Description |

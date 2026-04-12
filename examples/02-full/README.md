@@ -1,7 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
 
-
-
 ```hcl
 # tflint-ignore-file: azurerm_resource_tag
 
@@ -53,6 +51,7 @@ module "lock_multiple_resources" {
   created_by = "https://github.com/my-org/my-tf-project"
 }
 ```
+
 ## Outputs
 
 | Name | Description |

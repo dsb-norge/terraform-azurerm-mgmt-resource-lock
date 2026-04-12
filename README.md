@@ -7,7 +7,9 @@ Terraform module for adding [management locks](https://registry.terraform.io/pro
 Refer to [examples](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource-lock/tree/main/examples) for usage of module.
 
 <!-- BEGIN_TF_DOCS -->
-<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable-file MD013 -->
+<!-- markdownlint-disable-file MD033 -->
+<!-- markdownlint-disable-file MD037 -->
 ## Requirements
 
 | Name | Version |
@@ -21,7 +23,6 @@ Refer to [examples](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource
 |------|------|
 | [azurerm_management_lock.protected_resource_lock](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) | resource |
 
-<!-- markdownlint-disable MD013 -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
