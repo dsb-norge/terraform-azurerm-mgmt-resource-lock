@@ -2,39 +2,99 @@
 
 Below you can find basic guidelines and rules that must be followed during module development.
 
+## Using DSB Terraform Helpers
+
+The [dsb-norge/terraform-helpers](https://github.com/dsb-norge/terraform-helpers) script provides commands for all common development tasks. Load it once per shell session:
+
+```shell
+# Load authenticated with GitHub CLI
+source <(gh api -H "Accept: application/vnd.github.v3.raw" /repos/dsb-norge/terraform-helpers/contents/dsb-tf-proj-helpers.sh)
+
+# Or if the above doesn't work (some shells/agents don't support process substitution)
+eval "$(gh api -H 'Accept: application/vnd.github.v3.raw' /repos/dsb-norge/terraform-helpers/contents/dsb-tf-proj-helpers.sh)"
+```
+
+After loading, run `tf-help` to see all available commands, or `tf-status` for an overview of tools, authentication, and module structure.
+
 ## Validate your code
 
 ```shell
-  # Init project, run fmt and validate
-  terraform init -reconfigure
-  terraform fmt -recursive
-  terraform validate
+# Initialize the module (downloads providers)
+tf-init
 
-  # Lint with TFLint, calling script from https://github.com/dsb-norge/terraform-tflint-wrappers
-  alias lint='curl -s https://raw.githubusercontent.com/dsb-norge/terraform-tflint-wrappers/main/tflint_linux.sh | bash -s --'
-  lint
+# Or upgrade dependencies to latest within version constraints
+tf-upgrade
 
-  # Validate all example directories
-  for example_dir in examples/*/; do
-    dir_name=${example_dir%*/}
-    if ! terraform -chdir=${dir_name} init; then echo "terraform init failed in ${dir_name}"; break; fi
-    if ! terraform -chdir=${dir_name} validate; then echo "terraform validate failed in ${dir_name}"; break; fi
-    if ! terraform -chdir=${dir_name} fmt -check; then echo "terraform fmt check failed in ${dir_name}"; break; fi
-    if ! .tflint/tflint -chdir=${dir_name} --config .tflint.hcl; then echo "tflint failed in ${dir_name}"; break; fi
-  done
+# Check formatting
+tf-fmt
 
-  # Manually test all examples
-  az account set --subscription 'GUID HERE'
-  for example_dir in examples/*/; do
-    dir_name=${example_dir%*/}
-    if ! terraform -chdir=${dir_name} init; then echo "terraform init failed in ${dir_name}"; break; fi
-    if ! ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv) terraform -chdir=${dir_name} apply; then echo "terraform apply failed in ${dir_name}"; break; fi
-    if ! ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv) terraform -chdir=${dir_name} destroy; then echo "terraform destroy failed in ${dir_name}"; break; fi
-  done
+# Fix formatting
+tf-fmt-fix
 
-  # Run tests using built-in terraform testing framework
-  az account set --subscription 'GUID HERE'
-  ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv) terraform test
+# Validate the module
+tf-validate
+
+# Lint the module
+tf-lint
+
+# Initialize all examples
+tf-init-examples
+
+# Validate all examples
+tf-validate-examples
+
+# Lint all examples (uses root .tflint.hcl config)
+tf-lint-examples
+```
+
+## Run tests
+
+### Unit tests (no Azure credentials needed)
+
+```shell
+# Run unit tests (uses mocked providers)
+tf-test-unit
+```
+
+### Integration tests (deploys real Azure resources)
+
+Integration tests require Azure authentication. You will be asked to confirm by typing the subscription name before tests run:
+
+```shell
+# Log in to Azure (if not already)
+az-login
+
+# Set the subscription for testing
+az-select-sub
+
+# Run integration tests (prompts for subscription name confirmation)
+tf-test-integration
+
+# Run all tests (unit + integration, prompts if integration tests exist)
+tf-test
+```
+
+### Test individual examples manually
+
+```shell
+# Apply and destroy each example (prompts for subscription name confirmation)
+tf-test-examples
+```
+
+## Bump dependencies
+
+```shell
+# Bump everything: registry modules, tflint plugins, CI/CD workflow versions,
+# then upgrade terraform providers and show available upgrades
+tf-bump
+
+# Or bump individual categories
+tf-bump-modules          # Registry module versions in .tf files
+tf-bump-tflint-plugins   # TFLint plugin versions in .tflint.hcl
+tf-bump-cicd             # Terraform/tflint versions in GitHub workflow files
+
+# Show available provider upgrades
+tf-show-provider-upgrades
 ```
 
 ## Release and versioning
@@ -49,20 +109,25 @@ Refer to [release-please documentation](https://github.com/googleapis/release-pl
 ## Documentation
 
 Repo CI action has step to generate terraform documentation automatically using [terraform-docs action](https://github.com/terraform-docs/gh-actions) and configuration files in repo.
-It is, however, possible to run ```terraform-docs``` locally to check documentation during development or when other need occur.
+It is, however, possible to run `terraform-docs` locally to check documentation during development or when other need occur.
 
-### Generate and inject terraform-docs in README.md
+### Generate terraform-docs
 
 ```shell
-# go1.17+
+# Generate docs for root module (updates README.md)
+tf-docs
+
+# Generate docs for all examples (updates each example's README.md)
+tf-docs-examples
+
+# Generate both
+tf-docs-all
+```
+
+### Install terraform-docs (if needed)
+
+```shell
+# Requires Go 1.17+
 go install github.com/terraform-docs/terraform-docs@v0.19.0
 export PATH=$PATH:$(go env GOPATH)/bin
-
-# root
-terraform-docs .
-
-# docs for examples
-for ex_dir in $(find "./examples" -maxdepth 1 -mindepth 1 -type d | sort); do
-  terraform-docs "${ex_dir}" --config ./examples/.terraform-docs.yml
-done
 ```
