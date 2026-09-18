@@ -23,7 +23,13 @@ env:
 
 jobs:
   tf:
-    uses: dsb-norge/github-actions-terraform/.github/workflows/terraform-module-ci.yaml@v0
+    # TEMPORARY - pinned to a pre-release of the reusable workflow while
+    # dsb-norge/github-actions-terraform#53 is validated. That change moves this
+    # workflow's PR comments off the third-party comment action onto the same
+    # in-repo primitive the rest of the suite uses, so the test report is edited
+    # in place instead of deleted and re-posted on every push. Revert to '@v0'
+    # before merging; the preview tag disappears when that pull request closes.
+    uses: dsb-norge/github-actions-terraform/.github/workflows/terraform-module-ci.yaml@preview/pr-53
     secrets: inherit
     permissions:
       contents: write # required for checkout action.
