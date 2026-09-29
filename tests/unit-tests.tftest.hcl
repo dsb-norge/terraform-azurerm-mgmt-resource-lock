@@ -1,10 +1,4 @@
-provider "azurerm" {
-  features {}
-}
-
-mock_provider "azurerm" {
-  alias = "mock"
-}
+mock_provider "azurerm" {}
 
 # variables, see common-test.auto.tfvars
 
@@ -138,9 +132,6 @@ run "it_should_set_expected_attributes_on_lock_resources" {
 run "it_should_output_one_lock_resource_id_per_protected_resource" {
   command = apply
 
-  providers = {
-    azurerm = azurerm.mock
-  }
 
   # verify expected number of ids in output
   assert {
