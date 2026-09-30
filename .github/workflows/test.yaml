@@ -25,16 +25,14 @@ jobs:
     with:
       terraform-version: "1.16.x"
       tflint-version: "v0.64.0"
-      # unit tests mock their providers and run without credentials; every other test file runs
-      # with the repository's Azure principal
+      # unit tests mock their providers and run without credentials; every other test file runs in
+      # the GitHub Environment 'tftest-integration', whose ARM_TENANT_ID, ARM_SUBSCRIPTION_ID and
+      # ARM_CLIENT_ID secrets are the Azure principal's, which trusts only that environment
+      # (ARM_USE_OIDC is on by default in an environment lane)
       terraform-test-lanes-yml: |
         - name: unit
           match: ["**/unit-*.tftest.hcl"]
         - name: integration
+          github-environment: auto
           extra-envs-yml:
-            ARM_USE_OIDC: true
             ARM_USE_AZUREAD: true
-          extra-envs-from-secrets-yml:
-            ARM_TENANT_ID: REPO_AZURE_DSB_TENANT_ID
-            ARM_SUBSCRIPTION_ID: REPO_AZURE_SUBSCRIPTION_ID
-            ARM_CLIENT_ID: REPO_AZURE_TERRAFORM_USER_SERVICE_PRINCIPAL
