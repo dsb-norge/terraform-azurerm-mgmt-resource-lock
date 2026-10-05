@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource-lock/compare/v0.1.1...v1.0.0) (2026-10-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* callers on azurerm 3 stay on v0.1.1 of this module, or upgrade azurerm to 4.
+
+### Features
+
+* require azurerm 4 ([5afb0ba](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource-lock/commit/5afb0badc6f7f246da67a13ae1766e34568292f4))
+
 ## [0.1.1](https://github.com/dsb-norge/terraform-azurerm-mgmt-resource-lock/compare/v0.1.0...v0.1.1) (2024-12-18)
 
 
